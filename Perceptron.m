@@ -1,6 +1,6 @@
 function [w, num_iter] = Perceptron(X, y, w_init, max_iter)
 % Perceptron returns the coefficient vector w and number of iterations num_iter
-% for the Perceptron Learning Algorithm).  Parameters w_init and max_iter are
+% for the Perceptron Learning Algorithm.  Parameters w_init and max_iter are
 % optional arguments
 
 % Get size of X and Y
