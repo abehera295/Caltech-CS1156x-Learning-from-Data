@@ -13,26 +13,9 @@ K = 10000;  % number of points in test sample for probability calculation
 %rng('default'); % set up random number generator
 
 for i=1:m
-    X = a + (b-a).*rand(N, 2);   % X sample points
-    X = [ones(N, 1), X]; % now x = {1} X [-1,1]^d
-    Y = zeros(N, 1);
-
-    % choose to random points to define function f as a lin
-    fPnts = a + (b-a).*rand(2,2);
-
-    % Define direction vector of f and normal to it
-    fDirVec = [fPnts(1,2)-fPnts(1,1); fPnts(2,2)-fPnts(2,1)];
-    fNormVec = [fPnts(2,2)-fPnts(2,1); fPnts(1,1)-fPnts(1,2)];
-
-    % Equation of line f is w'*x +c = 0.  Determine c:
-    c = fPnts(1,2)*fPnts(2,1) - fPnts(1,1)*fPnts(2,2);
-
-    % Augment the fNormVec with the c in the first entry
-    fNormVec = [c; fNormVec];
-
-    % Determine true value of function f (+1, -1) and put in vector y
-    Y = sign(X*fNormVec);
-    
+    %Get dataset
+    [X, Y, fNormVec] = GenSepUniformPts(N, d, a, b);
+   
     % Run stochastic gradient descent for logistic regression
     num_iter = 0;
     eps = 0.01;
