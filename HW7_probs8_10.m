@@ -6,9 +6,9 @@ SVMBetterPLA = 0;
 TotalSupportVecs = 0;
 d = 2; % dimension of x vector
 a = -1; b = 1;  % sample from [a,b]^d
-N = 100; % number of points to sample
+N = 10; % number of points to sample
 m = 1000; % number of runs
-K = 100;  % number of points in test sample for probability calculation
+K = 5000;  % number of points in test sample for probability calculation
 
 for i=1:m
     %Get train dataset
@@ -28,13 +28,17 @@ for i=1:m
     gPLA = sign(xTest*wPLA);
     ProbMisClassPLA = sum(ytest ~= gPLA)/K;
     
+    % Run SVM
+    XSVM = X(:,2:end);
+    [wSVM, bSVM, SupportVecs, alpha, indicesSV] = svmLinear(XSVM,Y);
     
-    
-    ProbMisClassSVM = 0;
-    SupportVecs = 0;
+    % Compute out-of-sample error for SVM
+    xSVMtest = xTest(:,2:end);
+    gSVM = sign(xSVMtest*wSVM + bSVM);
+    ProbMisClassSVM = sum(ytest ~= gSVM)/K;
     
     % Tally the number of times SVM has a better classification probability
-    SVMBetterPLA = SVMBetterPLA + (ProbMisClassSVM > ProbMisClassPLA);
+    SVMBetterPLA = SVMBetterPLA + (ProbMisClassSVM < ProbMisClassPLA);
     
     % Tally the average number of support vectors
     TotalSupportVecs = TotalSupportVecs + SupportVecs;
