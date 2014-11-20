@@ -1,12 +1,9 @@
-%  HW 8 problems 7, 8 
+%  HW 8 problems 9, 10 
 
 % Initialization
 clear ; close all; clc
-K = 10; % K-fold cross-validation
-N = 100; % Number of runs
-C = [0.0001, 0.001, 0.01, 0.1, 1];
+C = [0.01, 1, 100, 10^4, 10^6];
 numC = length(C);
-Q = 2; % degree of the kernel polynomial
 
 % set path to libsvm
 addpath('~/Documents/Matlab/libsvm-3.20/matlab/');
@@ -36,24 +33,20 @@ testlabels15(testlabels15 == 5) = -1;
 trainlabels15(trainlabels15 == 1) = 1;
 trainlabels15(trainlabels15 == 5) = -1;
 
-Ecv = zeros(N, numC);
-minEcvIndex = zeros(N,1);
+Ein = zeros(numC, 1);
+Eout = zeros(numC, 1);
 
-for i = 1:N
-    % Generate random permutaiton of the training data matrix
-    trainData15rand = trainData15(randperm(length(trainlabels15)), :);
-    for j=1:numC
-        svmOpts = sprintf('-t 1 -d %f -r 1 -g 1 -c %f -v %u -q', Q, C(j), K);
-        model = svmtrain(trainData15rand(:,1), trainData15rand(:,2:end), svmOpts);
-        Ecv(i,j) = (100 - model)/100;
-    end;
-    [~, minEcvIndex(i,1)] = min(Ecv(i,:));
+% Set options for RBF kernel
+for i = 1:numC
+    svmOpts = sprintf('-t 2 -g 1 -c %f -q',C(i));
+    model = svmtrain(trainlabels15, trainfeatures15, svmOpts);
+    [predictedLabels, accuracy, ~] = svmpredict(trainlabels15, trainfeatures15, model, '-q');
+    Ein(i,1) = accuracy(2);
+    [predictedLabels, accuracy, ~] = svmpredict(testlabels15, testfeatures15, model, '-q');
+    Eout(i,1) = accuracy(2);
 end;
 
-% Find index of maximum occurrence of minimum Ecv
-z = tabulate(minEcvIndex);
-[~, Cindex] = max(z(:,2));
-mostFrequentC = C(Cindex)
-
-% Average Ecv for most frequent C
-meanEcv = mean(Ecv(:,Cindex))
+[~, minEinIndex] = min(Ein);
+C_lowest_Ein = C(minEinIndex)
+[~, minEoutIndex] = min(Eout);
+C_lowest_Eout = C(minEoutIndex)
