@@ -39,7 +39,7 @@ for i=1:m
     [wRBF, bRBF] = RBFKernel(X, Y, mu, gamma);
     
     % Compute the SVM and RBF hypothesis and in-sample error
-    gSVM = sign(KSVM(indicesSV,:)'*(alpha.*Y(indicesSV)) + bSVM);
+    gSVM = sign(KSVM_SV'*(alpha.*Y(indicesSV)) + bSVM);
     SVMTrainMisClass = find(Y ~= gSVM);
     numSVMTrainMisClass = numel(SVMTrainMisClass);
     ErrorSVMInSample(i) = numSVMTrainMisClass/length(Y);
