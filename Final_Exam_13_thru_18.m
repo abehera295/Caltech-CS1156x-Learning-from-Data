@@ -55,12 +55,12 @@ for i=1:m
     
     % Compute the gram matrics for SVM and RBF for test data
     XtestSV = Xtest(indicesSV,:);
-    KSVM_test = gram(Xtest, XtestSV, 'gauss', gamma);
+    KSVM_test = gram(Xtest, X(indicesSV,:), 'gauss', gamma);
     KRBF_test = gram(Xtest, mu, 'gauss', gamma);
     
     % Predict using SVM and RBF
     gRBF_test = sign(KRBF_test*wRBF + bRBF);
-    gSVM_test = sign(KSVM_test*(alpha.*Ytest(indicesSV)) + bSVM);
+    gSVM_test = sign(KSVM_test*(alpha.*Y(indicesSV)) + bSVM);
     
     % Calculate the out-of-sample error
     RBFTestMisClass = find(Ytest ~= gRBF_test);
